@@ -15,7 +15,7 @@
   (println myid targetid loveword)
   (mc/insert "loves" { :myid myid :targetid targetid :loveword loveword})
   (let [ret (mc/find-maps "loves" { :myid targetid :targetid myid })]
-    (if (mc/empty? ret)
+    (if (empty? ret)
       (format "请耐心等待，你喜欢的人 %s 或许也正暗恋着你" targetid)
       (format "你喜欢的人也喜欢你哦，ta对你说：%s" (:loveword (first ret))))))
 
