@@ -43,7 +43,7 @@
     (println "===================================")
     (println to from msgtype content)
     (println "-----------------------------------")
-    (let [[_ target word] (re-find content)
+    (let [[_ target word] (re-find #"^@(\w{6,})\s(.*)" content)
           ans (love from target word)]
       (format TEXT-TMPL from to (utils/get-time) "text" ans))))
 
