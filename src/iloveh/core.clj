@@ -12,6 +12,7 @@
 (def TOKEN "lyfpcy")
 
 (defn love [myid targetid loveword]
+  (println myid targetid loveword)
   (mc/insert "loves" { :myid myid :targetid targetid :loveword loveword})
   (let [ret (mc/find-maps "loves" { :myid targetid :targetid myid })]
     (if (mc/empty? ret)
