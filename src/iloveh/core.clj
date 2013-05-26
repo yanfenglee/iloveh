@@ -15,7 +15,7 @@
   (mc/insert "loves" { :myid myid :targetid targetid :loveword loveword})
   (let [ret (mc/find-maps "loves" { :myid targetid :targetid myid })]
     (if (mc/empty? ret)
-      (format "请耐心等待，你喜欢的人  %s 或许也正暗恋着你" targetid)
+      (format "请耐心等待，你喜欢的人 %s 或许也正暗恋着你" targetid)
       (format "你喜欢的人也喜欢你哦，ta对你说：%s" (:loveword (first ret))))))
 
 (defn infos [req]
@@ -43,8 +43,9 @@
     (println "===================================")
     (println to from msgtype content)
     (println "-----------------------------------")
-    (let [targetid content]
-      (format TEXT-TMPL from to (utils/get-time) "text" (from ))))
+    (let [[_ target word] (re-find content)
+          ans (love from target word)]
+      (format TEXT-TMPL from to (utils/get-time) "text" ans))))
 
 (defroutes all-routes
   (GET "/auth" [] auth)
@@ -61,5 +62,3 @@
   (init-db)
   (run-server (site #'all-routes) {:port 80})
   (println "run server..."))
-
-
