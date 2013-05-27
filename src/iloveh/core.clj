@@ -67,12 +67,12 @@
     (println to from msgtype content)
     (println "-----------------------------------")
     (if (or (= content 'c') (= content 'C'))
-      (checklove from)
+      (reply-text from to (checklove from))
 	    (let [ret (parsecontent content)]
 	      (if (nil? ret)
 	        (reply-text from to "输入格式不对哦, 请输入 @A喜欢@B ")
 	        (let [[_ from a b loveword] ret]
-	          (love from a b loveword)))))))
+	          (reply-text from to (love from a b loveword))))))))
 
 (defroutes all-routes
   (GET "/auth" [] auth)
