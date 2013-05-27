@@ -37,7 +37,7 @@
 		    (if (empty? ret2)
 		      (format "请耐心等待，你喜欢的人 %s 或许也正暗恋着你" b)
 		      (format "你喜欢的人也喜欢你哦，ta对你说：%s" (:loveword (first ret2))))))
-    (format "你是 %s 吧？ 不能用别的微信号哦:)" ))))
+    (format "你是 %s 吧？ 不能用别的微信号哦:)" (:a (first ret))))))
 
 (defn checklove [fromid]
   (let [ret (mc/find-maps "loves" {:fromid fromid})]
