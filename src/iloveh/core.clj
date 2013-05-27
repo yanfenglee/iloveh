@@ -66,7 +66,7 @@
     (println "===================================")
     (println to from msgtype content)
     (println "-----------------------------------")
-    (if (or (= content 'c') (= content 'C'))
+    (if (or (= content "c") (= content "C"))
       (reply-text from to (checklove from))
 	    (let [ret (parsecontent content)]
 	      (if (nil? ret)
