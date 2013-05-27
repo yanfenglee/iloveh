@@ -11,14 +11,6 @@
 
 (def TOKEN "lyfpcy")
 
-(defn love [myid targetid loveword]
-  (println myid targetid loveword)
-  (mc/insert "loves" { :myid myid :targetid targetid :loveword loveword})
-  (let [ret (mc/find-maps "loves" { :myid targetid :targetid myid })]
-    (if (empty? ret)
-      (format "请耐心等待，你喜欢的人 %s 或许也正暗恋着你" targetid)
-      (format "你喜欢的人也喜欢你哦，ta对你说：%s" (:loveword (first ret))))))
-
 (defn infos [req]
   (mc/find-maps "loves"))
 
@@ -33,7 +25,37 @@
     (if (= signature hashv)
       echostr
       (println "auth failed!"))))
- 
+
+
+
+(defn love [fromid a b loveword]
+  (println fromid a b loveword)
+  (let [ret (mc/find-maps "loves" {:fromid fromid})]
+    (if (or (empty? ret) (= (:a ret) a))
+		  (do (mc/insert "loves" {:fromid fromid :a a :b b :loveword loveword})
+      (let [ret2 (mc/find-maps "loves" {:a b :b a})]
+		    (if (empty? ret2)
+		      (format "请耐心等待，你喜欢的人 %s 或许也正暗恋着你" b)
+		      (format "你喜欢的人也喜欢你哦，ta对你说：%s" (:loveword (first ret2))))))
+    (format "你是 %s 吧？ 不能用别的微信号哦:)" ))))
+
+(defn checklove [fromid]
+  (let [ret (mc/find-maps "loves" {:fromid fromid})]
+    (if (empty? ret)
+      (format "你还没有告诉我你喜欢谁哦：），请先告诉我你喜欢谁，才能查询是否有人也喜欢你哦^_^")
+      (let [a (:a ret)
+            ret2 (mc/find-maps "loves" {:b a})]
+        (if (empty? ret2)
+          (format "请耐心等待，你喜欢的人或许还没不认识我哦，你可以跟ta介绍下我呀^_^")
+          (format "恭喜你，%s 喜欢你哦，快和ta联系吧:)" (:a (first ret2))))))))
+
+
+(defn parsecontent [content]
+  (re-find #"^@(\w{6,})\s*喜欢\s*@(\w{6,})\s*(.*)" content))
+
+(defn reply-text [from to content]
+  (format TEXT-TMPL from to (utils/get-time) "text" content))
+
 (defn reply [poststr]
   (println poststr)
   (let [xs (utils/xml-parse-str poststr)
@@ -44,9 +66,13 @@
     (println "===================================")
     (println to from msgtype content)
     (println "-----------------------------------")
-    (let [[_ target word] (re-find #"^@(\w{6,})\s(.*)" content)
-          ans (love from target word)]
-      (format TEXT-TMPL from to (utils/get-time) "text" ans))))
+    (if (or (= content 'c') (= content 'C'))
+      (checklove from)
+	    (let [ret (parsecontent content)]
+	      (if (nil? ret)
+	        (reply-text from to "输入格式不对哦, 请输入 @A喜欢@B ")
+	        (let [[_ from a b loveword] ret]
+	          (love from a b loveword)))))))
 
 (defroutes all-routes
   (GET "/auth" [] auth)
