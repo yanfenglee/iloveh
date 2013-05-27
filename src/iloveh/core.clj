@@ -44,7 +44,7 @@
   (let [ret (mc/find-maps "loves" {:fromid fromid})]
     (if (empty? ret)
       (format "你还没有告诉我你喜欢谁哦：），请先告诉我你喜欢谁，才能查询是否有人也喜欢你哦^_^")
-      (let [a (:a ret)
+      (let [a (:a (first ret))
             ret2 (mc/find-maps "loves" {:b a})]
         (if (empty? ret2)
           (format "请耐心等待，你喜欢的人或许还没不认识我哦，你可以跟ta介绍下我呀^_^")
