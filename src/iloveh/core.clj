@@ -64,18 +64,19 @@
         to (utils/xml-find :ToUserName xs)
         from (utils/xml-find :FromUserName xs)
         msgtype (utils/xml-find :MsgType xs)
-        content (utils/xml-find :Content xs)]
+        content (utils/xml-find :Content xs)
+        resp #(reply-text from to %)]
     (println "===================================")
     (println to from msgtype content)
     (println "-----------------------------------")
     (case content
-      ("h" "H") HELP
-      ("c" "C") (reply-text from to (checklove from))
+      ("h" "H") (resp HELP)
+      ("c" "C") (resp (checklove from))
 	    (let [ret (parsecontent content)]
 	      (if (nil? ret)
-	        (reply-text from to HELP)
+	        (resp HELP)
 	        (let [[_ a b loveword] ret]
-	          (reply-text from to (love from a b loveword))))))))
+	          (resp (love from a b loveword))))))))
 
 (defroutes all-routes
   (GET "/auth" [] auth)
