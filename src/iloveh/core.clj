@@ -71,7 +71,7 @@
 	    (let [ret (parsecontent content)]
 	      (if (nil? ret)
 	        (reply-text from to "输入格式不对哦, 请输入 @A喜欢@B ")
-	        (let [[_ from a b loveword] ret]
+	        (let [[_ a b loveword] ret]
 	          (reply-text from to (love from a b loveword))))))))
 
 (defroutes all-routes
