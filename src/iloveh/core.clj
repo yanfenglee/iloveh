@@ -40,6 +40,7 @@
     (format "你是 %s 吧？ 不能用别的微信号哦:)" (:a (first ret))))))
 
 (defn checklove [fromid]
+  (println "begin query id: " fromid)
   (let [ret (mc/find-maps "loves" {:fromid fromid})]
     (if (empty? ret)
       (format "你还没有告诉我你喜欢谁哦：），请先告诉我你喜欢谁，才能查询是否有人也喜欢你哦^_^")
