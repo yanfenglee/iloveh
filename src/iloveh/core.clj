@@ -11,6 +11,9 @@
 
 (def TOKEN "lyfpcy")
 
+(def HELP "输入格式: \"@A 喜欢 @B 这是我想对你说的话\"，其中A为你自己的微信号，B为对方的微信号，
+           后面一句是你想对ta说的话，输入\"c\"查询是否有人喜欢你，输入\"h\"请求帮助")
+
 (defn infos [req]
   (mc/find-maps "loves"))
 
@@ -25,7 +28,6 @@
     (if (= signature hashv)
       echostr
       (println "auth failed!"))))
-
 
 
 (defn love [fromid a b loveword]
@@ -67,11 +69,12 @@
     (println "===================================")
     (println to from msgtype content)
     (println "-----------------------------------")
-    (if (or (= content "c") (= content "C"))
-      (reply-text from to (checklove from))
+    (case content
+      ("c" "C") (reply-text from to (checklove from))
+      ("h" "H") HELP
 	    (let [ret (parsecontent content)]
 	      (if (nil? ret)
-	        (reply-text from to "输入格式不对哦, 请输入 @A喜欢@B ")
+	        (reply-text from to HELP)
 	        (let [[_ a b loveword] ret]
 	          (reply-text from to (love from a b loveword))))))))
 
