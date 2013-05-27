@@ -69,13 +69,13 @@
     (println to from msgtype content)
     (println "-----------------------------------")
     (case content
-      ("c" "C") (reply-text from to (checklove from)
       ("h" "H") HELP
+      ("c" "C") (reply-text from to (checklove from))
 	    (let [ret (parsecontent content)]
 	      (if (nil? ret)
 	        (reply-text from to HELP)
 	        (let [[_ a b loveword] ret]
-	          (reply-text from to (love from a b loveword)))))))))
+	          (reply-text from to (love from a b loveword))))))))
 
 (defroutes all-routes
   (GET "/auth" [] auth)
