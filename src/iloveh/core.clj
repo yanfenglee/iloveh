@@ -56,6 +56,7 @@
   (re-find #"^@(\w{6,})\s*喜欢\s*@(\w{6,})\s*(.*)" content))
 
 (defn reply-text [from to content]
+  (println "reply msg" from to content)
   (format TEXT-TMPL from to (utils/get-time) "text" content))
 
 (defn reply [poststr]
@@ -64,19 +65,27 @@
         to (utils/xml-find :ToUserName xs)
         from (utils/xml-find :FromUserName xs)
         msgtype (utils/xml-find :MsgType xs)
-        content (utils/xml-find :Content xs)
         resp #(reply-text from to %)]
     (println "===================================")
-    (println to from msgtype content)
+    (println to from msgtype)
     (println "-----------------------------------")
-    (case content
-      ("h" "H") (resp HELP)
-      ("c" "C") (resp (checklove from))
-	    (let [ret (parsecontent content)]
-	      (if (nil? ret)
-	        (resp HELP)
-	        (let [[_ a b loveword] ret]
-	          (resp (love from a b loveword))))))))
+    (case msgtype
+      "text" (let [content (utils/xml-find :Content xs)]
+               (case content
+                 ("h" "H") (resp HELP)
+						     ("c" "C") (resp (checklove from))
+							   (let [ret (parsecontent content)]
+							     (if (nil? ret)
+							       (resp HELP)
+							       (let [[_ a b loveword] ret]
+							         (resp (love from a b loveword)))))))
+      "event" (let [ev (utils/xml-find :Event xs)]
+                (case ev
+                  "subscribe" (resp HELP)
+                  "unsubscribe" (resp "unsubscribed!")
+                  "CLICK" (resp "clicked")))
+      (resp "目前不支持此消息类型"))))
+
 
 (defroutes all-routes
   (GET "/auth" [] auth)
