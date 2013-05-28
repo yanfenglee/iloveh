@@ -28,16 +28,18 @@
       echostr
       (println "auth failed!"))))
 
+(defn resplove [info]
+  (apply str (map #(format "你喜欢的人 %s 也喜欢你哦, ta对你说: %s \n" (:a %) (:loveword %)) info)))
 
 (defn love [fromid a b loveword]
   (println fromid a b loveword)
   (let [ret (mc/find-maps "loves" {:fromid fromid})]
-    (if (or (empty? ret) (= (:a ret) a))
+    (if (or (empty? ret) (= (:a (first ret)) a))
 		  (do (mc/insert "loves" {:fromid fromid :a a :b b :loveword loveword})
       (let [ret2 (mc/find-maps "loves" {:a b :b a})]
 		    (if (empty? ret2)
 		      (format "请耐心等待，你喜欢的人 %s 或许也正暗恋着你" b)
-		      (format "你喜欢的人也喜欢你哦，ta对你说：%s" (:loveword (first ret2))))))
+		      (resplove ret2))))
     (format "你是 %s 吧？ 不能用别的微信号哦:)" (:a (first ret))))))
 
 (defn checklove [fromid]
@@ -49,7 +51,7 @@
             ret2 (mc/find-maps "loves" {:b a})]
         (if (empty? ret2)
           (format "请耐心等待，你喜欢的人或许还没不认识我哦，你可以跟ta介绍下我呀^_^")
-          (format "恭喜你，%s 喜欢你哦，快和ta联系吧:)" (:a (first ret2))))))))
+          (resplove ret2))))))
 
 
 (defn parsecontent [content]
@@ -90,7 +92,6 @@
 (defroutes all-routes
   (GET "/auth" [] auth)
   (POST "/auth" {body :body} (reply (slurp body)))
-  (GET "/love" [] love)
   (GET "/infos" [] infos)
   (route/not-found "<p>Page not found.</p>"))
 
