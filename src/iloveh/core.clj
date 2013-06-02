@@ -72,7 +72,12 @@
     "请耐心等待"
     (if (empty? like)
       "有人喜欢你哦，快@你喜欢的人，看看你们是否相互喜欢"
-      "")))
+      (let [matches (for [x be-liked,y like :when (and (= (:a x) (:b y)) (= (:a y) (:b x)))] [x y])]
+        (if (empty? matches)
+          "发现有喜欢你的人，但ta并非你喜欢的，想想会是谁呢？"
+          (let [asaid (reduce #(conj %1 %2) #{} (map #(first %) matches))
+                bsaid (reduce #(conj %1 %2) #{} (map #(second %) matches))]
+            (str (format-sweetwords asaid) "\n----------\n" (format-sweetwords bsaid))))))))
 
 (defn check-liked [openid]
   (let [info (get-register-info openid)]
@@ -121,10 +126,10 @@
 ;;;/////////////////////////////////////////
 
 (defn parse-message [msg]
-  (re-find #"^@(\w{6,})\s*喜欢\s*@(\w{6,})\s*(.*)" msg))
+  (re-find #"\s*@(\w{6,})\s*(.*)" msg))
 
 (defn parse-register [msg]
-  (re-find #"^@(\w{6,})\s*喜欢\s*(?????)" msg))
+  (re-find #"\s*(\w{6,})\s*(?????)" msg))
 
 (defn reply-text [from to content]
   (println "reply msg" from to content)

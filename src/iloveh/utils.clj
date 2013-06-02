@@ -4,22 +4,6 @@
   (:require [clojure.xml :as xml])
   (:require [clojure.zip :as zip]))
 
-(def xmldata 
-  "<books>
-	  <book>
-	    <title>The joy of clojure</title>
-	    <author>Michael Fogus / Chris House</author>
-	  </book>
-	  <book>
-	    <title>Programming clojure</title>
-	    <author>Stuart Halloway</author>
-	  </book>
-	  <book>
-	    <title>Practical clojure</title>
-	    <author>Luke Van der Hart</author>
-	  </book>
-	</books>")
-
 (defn xml-parse-str [s]
   (xml/parse (java.io.ByteArrayInputStream. (.getBytes s))))
 
@@ -52,5 +36,8 @@
 
 (defn get-time []
   (.getTime (new java.util.Date))) 
+
+(defn testmap [a b]
+  (for [x a,y b :when (and (= (:a x) (:b y)) (= (:a y) (:b x)))] x))
 
 
