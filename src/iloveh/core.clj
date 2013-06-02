@@ -66,7 +66,7 @@
   (mc/find-one-as-map "users" {:openid openid}))
 
 (defn registered? [openid]
-  (nil? (get-register-info openid)))
+  (not= (get-register-info openid) nil))
 
 ;;;你喜欢的人和喜欢你的人是否匹配
 (defn match-message [be-liked like]
