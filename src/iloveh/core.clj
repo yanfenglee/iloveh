@@ -138,7 +138,7 @@
                      (if (nil? ret)
                        REGISTER-HELP
                        (let [[_ openid name email] ret]
-                         (register openid name email)))))
+                         (register openid name email)))))))
       "event" (let [ev (utils/xml-find :Event xs)]
                 (case ev
                   "subscribe" (resp WELCOME-MSG)
