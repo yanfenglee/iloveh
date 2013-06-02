@@ -2,6 +2,7 @@
   (:gen-class)
   (:require [iloveh.utils :as utils])
   (:require [monger.core :as mg])
+  (:require [monger.result :as mr])
   (:require [monger.collection :as mc])
   (:use [compojure.route :only [files not-found] :as route]
      [compojure.handler :only [site]]
@@ -42,7 +43,7 @@
 
 ;;;注册用户
 (defn register [openid name email]
-  (if (mg/ok? (mc/insert "users" {:openid openid :name name :emal emal}))
+  (if (mr/ok? (mc/insert "users" {:openid openid :name name :emal emal}))
     (str "注册成功! " HELP)
     "数据库错误，注册失败"))
 
@@ -95,7 +96,7 @@
     (if (nil? ret)
       REGISTER-HELP
       (let [you (:name ret)]
-        (if (mg/ok? (mc/insert "messages" {:a you :b ta :sweetwords sweetwords}))
+        (if (mr/ok? (mc/insert "messages" {:a you :b ta :sweetwords sweetwords}))
           (let [[match tasaid yousaid] (like-eachother? ta you)]
             (if match
               (send-match-mail ta you tasaid yousaid)
