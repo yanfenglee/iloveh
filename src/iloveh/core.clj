@@ -62,9 +62,11 @@
       [true asaid bsaid]
       [false "" ""])))
 
+;;;获取注册信息
 (defn get-register-info [openid]
   (mc/find-one-as-map "users" {:openid openid}))
 
+;;;判断是否已经注册
 (defn registered? [openid]
   (not= (get-register-info openid) nil))
 
@@ -80,8 +82,9 @@
           "发现有喜欢你的人，但ta并非你喜欢的，想想会是谁呢？"
           (let [asaid (reduce #(conj %1 %2) #{} (map #(first %) matches))
                 bsaid (reduce #(conj %1 %2) #{} (map #(second %) matches))]
-            (str (format-sweetwords asaid) "\n----------\n" (format-sweetwords bsaid))))))))
+            (str (format-sweetwords asaid) "\n--------------\n" (format-sweetwords bsaid))))))))
 
+;;;查询是否有人喜欢你
 (defn check-liked [openid]
   (let [info (get-register-info openid)]
     (if (nil? info)
@@ -103,16 +106,20 @@
               DEFAULT-RETURN))
           "数据库插入错误")))))
 
+;;;表白信息正则表达送，格式: @微信号 xxx
 (defn parse-message [msg]
   (re-find #"\s*@(\w{6,})\s*(.*)" msg))
 
+;;;注册信息正则表达式，格式: myweixin myemail@gmail.com 
 (defn parse-register [msg]
   (re-find #"\s*(\w{6,})\s*((\w+\.)*\w+@(\w+\.)+[A-Za-z]+)" msg))
 
+;;;生成微信回复格式
 (defn reply-text [from to content]
   (println "reply msg" from to content)
   (format TEXT-TMPL from to (utils/get-time) "text" content))
 
+;;;处理微信消息
 (defn reply [poststr]
   (println poststr)
   (let [xs (utils/xml-parse-str poststr)
