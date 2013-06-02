@@ -137,8 +137,8 @@
                    (let [ret (parse-register content)]
                      (if (nil? ret)
                        (resp REGISTER-HELP)
-                       (let [[_ openid name email] ret]
-                         (resp (register openid name email))))))))
+                       (let [[_ name email] ret]
+                         (resp (register from name email))))))))
       "event" (let [ev (utils/xml-find :Event xs)]
                 (case ev
                   "subscribe" (resp WELCOME-MSG)
@@ -153,7 +153,7 @@
   (route/not-found "<p>Page not found.</p>"))
 
 (defn init-db []
-  (mg/connect-via-uri! "mongodb://127.0.0.1/test2"))
+  (mg/connect-via-uri! "mongodb://127.0.0.1/weixin"))
 
 (defn -main [& args]
   (init-db)
