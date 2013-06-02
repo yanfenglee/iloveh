@@ -31,14 +31,14 @@
       echostr
       (println "auth failed!"))))
 
+;;;格式化a对b说的话
+(defn format-sweetwords [words]
+  (apply str (map #(format "%s 喜欢 %s, %s 对 %s 说: %s \n" (:a %) (:b %) (:a %) (:b %) (:sweetwords %)) words)))
+
 ;;;发送邮件通知双方互相喜欢
 (defn send-match-mail [a b asaid bsaid]
   (println "like each other " a b asaid bsaid)
   (str "恭喜你们俩，你们互相喜欢\n" (format-sweetwords asaid) "\n" (format-sweetwords bsaid)))
-
-;;;格式化a对b说的话
-(defn format-sweetwords [words]
-  (apply str (map #(format "%s 喜欢 %s, %s 对 %s 说: %s \n" (:a %) (:b %) (:a %) (:b %) (:sweetwords %)) words)))
 
 ;;;注册用户
 (defn register [openid name email]
