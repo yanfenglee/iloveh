@@ -14,7 +14,7 @@
 (def TOKEN "lyfpcy")
 
 ;;;返回信息
-(def HELP "输入: @微信号 xxx，其中xxx为你对ta的表白，输入\"c\"查询是否有人喜欢你，输入\"h\"请求帮助")
+(def HELP "输入: @微信号 xxx，其中微信号为对方的微信号，xxx为你对ta的表白，输入\"c\"查询是否有人喜欢你，输入\"h\"请求帮助")
 (def REGISTER-HELP "请先注册信息, 输入你的微信号与电子邮件地址,即可完成注册，注意用空格隔开。\n例如: xiaoming123 xm1990@gmail.com\n")
 (def DEFAULT-RETURN "请耐心等待，如果ta也喜欢你，我们会邮件通知你们俩的")
 (def WELCOME-MSG (str "谢谢关注我们的帐号，" REGISTER-HELP HELP))
