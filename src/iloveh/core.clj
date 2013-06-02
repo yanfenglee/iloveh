@@ -47,6 +47,13 @@
     (str "注册成功! " HELP)
     "数据库错误，注册失败"))
 
+;;;判断a是否喜欢b
+(defn like? [a b]
+  (let [ret (mc/find-maps "messages" {:a a :b b})]
+    (if (empty? ret)
+      [false ""]
+      [true ret])))
+
 ;;;查看是否相互喜欢
 (defn like-each-other? [a b]
   (let [[alikeb asaid] (like? a b)
@@ -54,13 +61,6 @@
     (if (and alikeb blikea)
       [true asaid bsaid]
       [false "" ""])))
-
-;;;判断a是否喜欢b
-(defn like? [a b]
-  (let [ret (mc/find-maps "messages" {:a a :b b})]
-    (if (empty? ret)
-      [false ""]
-      [true ret])))
 
 (defn get-register-info [openid]
   (mc/find-one-as-map "users" {:openid openid}))
