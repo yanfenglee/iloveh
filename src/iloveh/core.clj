@@ -134,13 +134,13 @@
       "text" (let [content (utils/xml-find :Content xs)]
                (case content
                  ("h" "H") (resp (if (registered? from) HELP REGISTER-HELP))
-						     ("c" "C") (resp (check-liked from))           
-							   (if (registered? from)
+		 ("c" "C") (resp (check-liked from))           
+		 (if (registered? from)
                    (let [ret (parse-message content)]
                      (if (nil? ret)
-							         (resp HELP)
-							         (let [[_ ta sweetwords] ret]
-							           (resp (speak-to-ta from ta sweetwords)))))
+		       (resp HELP)
+	               (let [[_ ta sweetwords] ret]
+	           	 (resp (speak-to-ta from ta sweetwords)))))
                    (let [ret (parse-register content)]
                      (if (nil? ret)
                        (resp REGISTER-HELP)
