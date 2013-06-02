@@ -42,7 +42,9 @@
 
 ;;;注册用户
 (defn register [openid name email]
-  (mc/insert "users" {:openid openid :name name :emal emal}))
+  (if (mg/ok? (mc/insert "users" {:openid openid :name name :emal emal}))
+    (str "注册成功! " HELP)
+    "数据库错误，注册失败"))
 
 ;;;查看是否相互喜欢
 (defn like-each-other? [a b]
@@ -99,37 +101,12 @@
               (send-match-mail ta you tasaid yousaid)
               DEFAULT-RETURN)))))
           "数据库插入错误")
-        
-        
-;;;///////////////////////////////////////////
-(defn love [fromid a b sweetwords]
-  (println fromid a b sweetwords)
-  (let [ret (mc/find-maps "loves" {:fromid fromid})]
-    (if (or (empty? ret) (= (:a (first ret)) a))
-		  (do (mc/insert "loves" {:fromid fromid :a a :b b :sweetwords sweetwords})
-      (let [ret2 (mc/find-maps "loves" {:a b :b a})]
-		    (if (empty? ret2)
-		      (format "请耐心等待，你喜欢的人 %s 或许也正暗恋着你" b)
-		      (resplove ret2))))
-    (format "你是 %s 吧？ 不能用别的微信号哦:)" (:a (first ret))))))
-
-(defn checklove [fromid]
-  (println "begin query id: " fromid)
-  (let [ret (mc/find-maps "loves" {:fromid fromid})]
-    (if (empty? ret)
-      (format "你还没有告诉我你喜欢谁哦：），请先告诉我你喜欢谁，才能查询是否有人也喜欢你哦^_^")
-      (let [a (:a (first ret))
-            ret2 (mc/find-maps "loves" {:b a})]
-        (if (empty? ret2)
-          (format "请耐心等待，你喜欢的人或许还没不认识我哦，你可以跟ta介绍下我呀^_^")
-          (resplove ret2))))))
-;;;/////////////////////////////////////////
 
 (defn parse-message [msg]
   (re-find #"\s*@(\w{6,})\s*(.*)" msg))
 
 (defn parse-register [msg]
-  (re-find #"\s*(\w{6,})\s*(?????)" msg))
+  (re-find #"\s*(\w{6,})\s*((\w+\.)*\w+@(\w+\.)+[A-Za-z]+)" msg))
 
 (defn reply-text [from to content]
   (println "reply msg" from to content)
@@ -149,12 +126,18 @@
       "text" (let [content (utils/xml-find :Content xs)]
                (case content
                  ("h" "H") (resp (if (registered? from) HELP REGISTER-HELP))
-						     ("c" "C") (resp (ta-like-you from))
-							   (let [ret (parsecontent content)]
-							     (if (nil? ret)
-							       (resp HELP)
-							       (let [[_ a b sweetwords] ret]
-							         (resp (love from a b sweetwords)))))))
+						     ("c" "C") (resp (check-liked from))           
+							   (if (registered? from)
+                   (let [ret (parse-message content)]
+                     (if (nil? ret)
+							         (resp HELP)
+							         (let [[_ ta sweetwords] ret]
+							           (resp (speak-to-ta from ta sweetwords)))))
+                   (let [ret (parse-register content)]
+                     (if (nil? ret)
+                       REGISTER-HELP
+                       (let [[_ openid name email] ret]
+                         (register openid name email)))))
       "event" (let [ev (utils/xml-find :Event xs)]
                 (case ev
                   "subscribe" (resp WELCOME-MSG)
