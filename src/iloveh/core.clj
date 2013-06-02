@@ -136,9 +136,9 @@
 							           (resp (speak-to-ta from ta sweetwords)))))
                    (let [ret (parse-register content)]
                      (if (nil? ret)
-                       REGISTER-HELP
+                       (resp REGISTER-HELP)
                        (let [[_ openid name email] ret]
-                         (register openid name email)))))))
+                         (resp (register openid name email))))))))
       "event" (let [ev (utils/xml-find :Event xs)]
                 (case ev
                   "subscribe" (resp WELCOME-MSG)
