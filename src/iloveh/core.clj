@@ -97,7 +97,7 @@
       REGISTER-HELP
       (let [you (:name ret)]
         (if (mr/ok? (mc/insert "messages" {:a you :b ta :sweetwords sweetwords}))
-          (let [[match tasaid yousaid] (like-eachother? ta you)]
+          (let [[match tasaid yousaid] (like-each-other? ta you)]
             (if match
               (send-match-mail ta you tasaid yousaid)
               DEFAULT-RETURN))
