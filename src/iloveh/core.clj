@@ -43,7 +43,7 @@
 
 ;;;注册用户
 (defn register [openid name email]
-  (if (mr/ok? (mc/insert "users" {:openid openid :name name :emal emal}))
+  (if (mr/ok? (mc/insert "users" {:openid openid :name name :email email}))
     (str "注册成功! " HELP)
     "数据库错误，注册失败"))
 
