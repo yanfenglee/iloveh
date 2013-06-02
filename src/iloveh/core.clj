@@ -100,8 +100,8 @@
           (let [[match tasaid yousaid] (like-eachother? ta you)]
             (if match
               (send-match-mail ta you tasaid yousaid)
-              DEFAULT-RETURN)))))
-          "数据库插入错误")
+              DEFAULT-RETURN))
+          "数据库插入错误")))))
 
 (defn parse-message [msg]
   (re-find #"\s*@(\w{6,})\s*(.*)" msg))
