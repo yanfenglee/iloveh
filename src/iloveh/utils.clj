@@ -17,10 +17,10 @@
 
 
 (defn get-hash [type data]
-	(.digest (java.security.MessageDigest/getInstance type) (.getBytes data) ))
+  (.digest (java.security.MessageDigest/getInstance type) (.getBytes data) ))
  
 (defn sha1-hash [data]
- 	(get-hash "sha1" data))
+  (get-hash "sha1" data))
  
 (defn get-hash-str [data-bytes]
   (apply str 
@@ -37,7 +37,5 @@
 (defn get-time []
   (.getTime (new java.util.Date))) 
 
-(defn testmap [a b]
-  (for [x a,y b :when (and (= (:a x) (:b y)) (= (:a y) (:b x)))] x))
 
 
